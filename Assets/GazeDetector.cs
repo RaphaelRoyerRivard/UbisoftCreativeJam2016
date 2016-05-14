@@ -6,6 +6,7 @@ using UnityEngine;
 
 /// <summary>
 /// This class checks if a GameObject is in the center of the main camera's sight.
+/// The Update method must be call on each frame update.
 /// </summary>
 public class GazeDetector
 {

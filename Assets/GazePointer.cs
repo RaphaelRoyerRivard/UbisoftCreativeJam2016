@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// This class is designed to be used on the GazePointer prefab.
+/// </summary>
 public class GazePointer : MonoBehaviour, GazeListener
 {
     GazeDetector gazeDetector;

@@ -6,7 +6,7 @@ using UnityEngine;
 
 /// <summary>
 /// This class will look for angle change of the main camera.
-/// The Update method must be call for it to properly detect the movements.
+/// The Update method must be call on each frame update for it to properly detect the movements.
 /// </summary>
 public class HeadMovementDetector
 {
