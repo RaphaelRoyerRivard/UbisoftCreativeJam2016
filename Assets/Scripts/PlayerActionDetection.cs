@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// This class detects when the player performs an action.
@@ -24,6 +23,7 @@ public class PlayerActionDetection : MonoBehaviour, PlayerActionListener
 
     public void ActionDetected()
     {
-        Debug.Log("ActionDetected");
+        UnityEngine.VR.InputTracking.Recenter();
+        SceneManager.LoadScene(1);
     }
 }
