@@ -25,5 +25,6 @@ public class PlayerActionDetection : MonoBehaviour, PlayerActionListener
     public void ActionDetected()
     {
         Debug.Log("ActionDetected");
+        UnityEngine.VR.InputTracking.Recenter();
     }
 }
