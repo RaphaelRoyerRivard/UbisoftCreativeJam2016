@@ -71,4 +71,11 @@ public class SoundPlayer : MonoBehaviour {
         int soundIndex = (int) Mathf.Floor(Random.Range(0, audioClips[index].Length));
         audioSources[index].PlayOneShot(audioClips[index][soundIndex]);
     }
+
+    public static void playSoundNamed(string sound, AudioSource audioSource)
+    {
+        audioSource.PlayOneShot((AudioClip)Resources.Load(sound));
+    }
+
+
 }
