@@ -3,11 +3,11 @@ using System.Collections;
 
 public class GameLoop : MonoBehaviour
 {
-    public float fadeInTimeFirstSounds = 5;
+    public float firstTickTime = 5;
 
     private AudioSource ambiantSound;
     private float elapsedTime = 0;
-    private bool firstSoundsManaged = false;
+    private bool firstTickPassed = false;
 
     // Use this for initialization
     void Start () {
@@ -19,25 +19,39 @@ public class GameLoop : MonoBehaviour
 	void Update ()
     {
         elapsedTime += Time.deltaTime;
-        fadeInAmbiantSound();
-        ManageFirstScreems();
+        manageFirstTick();
 	}
 
-    void fadeInAmbiantSound()
+    void manageFirstTick()
     {
-        if(elapsedTime < fadeInTimeFirstSounds)
+        if(!firstTickPassed)
         {
-            ambiantSound.volume = (elapsedTime / fadeInTimeFirstSounds) * 0.5f;
+            fadeInAmbiantSound();
+            if(elapsedTime > firstTickTime)
+            {
+                firstTickPassed = true;
+                startFirstScreems();
+                openNeon();
+            }
         }
     }
 
-    void ManageFirstScreems()
+    void fadeInAmbiantSound()
     {
-        if(!firstSoundsManaged && elapsedTime > fadeInTimeFirstSounds)
-        {
-            SoundPlayer soundPlayer = (SoundPlayer)GetComponent(typeof(SoundPlayer));
-            soundPlayer.addSound(2);
-            firstSoundsManaged = true;
-        }
+        ambiantSound.volume = (elapsedTime / firstTickTime) * 0.5f;
+    }
+
+    void startFirstScreems()
+    {
+        SoundPlayer soundPlayer = (SoundPlayer)GetComponent(typeof(SoundPlayer));
+        soundPlayer.addSound(2);
+        firstTickPassed = true;
+    }
+
+    void openNeon()
+    {
+        NeonScript neon = (NeonScript) GameObject.Find("Neon").GetComponent(typeof(NeonScript));
+        Debug.Log(neon);
+        neon.Open();
     }
 }
