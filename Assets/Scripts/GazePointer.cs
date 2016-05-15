@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// This class is designed to be used on the GazePointer prefab.
@@ -96,8 +95,7 @@ public class GazePointer : MonoBehaviour, GazeListener, DirectPathOrderListener
             locks++;
             if(locks == 2)
             {
-                //TODO close lights and play
-                SoundPlayer.playSoundNamed("VO_Run", GameObject.Find("Helper(Clone)").GetComponent<AudioSource>());
+                SceneManager.LoadScene(3);
             }
         }
     }

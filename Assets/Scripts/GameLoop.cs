@@ -54,7 +54,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     void startFirstScreems()
     {
         SoundPlayer soundPlayer = (SoundPlayer)GetComponent(typeof(SoundPlayer));
-        soundPlayer.addSound(2);
+        soundPlayer.addSound(1);
         firstTickPassed = true;
     }
 

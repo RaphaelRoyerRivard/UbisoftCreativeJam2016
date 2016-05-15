@@ -13,3 +13,5 @@ EditorBuildSettings:
     path: Assets/Scene/game.unity
   - enabled: 1
     path: Assets/Scene/lose.unity
+  - enabled: 1
+    path: Assets/Scene/end.unity
