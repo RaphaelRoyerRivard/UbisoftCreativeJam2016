@@ -10,7 +10,7 @@ class SentinelWatcher : MonoBehaviour
 
     void Update()
     {
-        
+        //TODO call GameLoop
     }
 
     void OnCollisionEnter (Collision col)

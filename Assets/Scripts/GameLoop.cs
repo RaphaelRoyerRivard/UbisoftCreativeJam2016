@@ -111,6 +111,6 @@ public class GameLoop : MonoBehaviour, HeadMovementListener
 
     public void SentinelExited()
     {
-
+        //TODO trigger next
     }
 }
