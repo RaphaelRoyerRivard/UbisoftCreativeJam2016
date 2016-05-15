@@ -24,7 +24,7 @@ class SentinelWatcher : MonoBehaviour
         {
             if(lastPosition != transform.position)
             {
-                Debug.Log("startMoving");
+                //Debug.Log("startMoving");
                 isMoving = true;
                 startSoundLoop();
             }
@@ -32,7 +32,7 @@ class SentinelWatcher : MonoBehaviour
         {
             if (lastPosition == transform.position)
             {
-                Debug.Log("stopMoving");
+                //Debug.Log("stopMoving");
                 isMoving = false;
                 stopSoundLoop();
             }

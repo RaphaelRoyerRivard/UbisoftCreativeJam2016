@@ -2,5 +2,5 @@
 
 public interface DirectPathOrderListener
 {
-    void destinationReached(GameObject subject, bool toKill);
+    void destinationReached(GameObject subject, bool destinationReached);
 }

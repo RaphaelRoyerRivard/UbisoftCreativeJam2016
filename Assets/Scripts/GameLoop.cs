@@ -13,7 +13,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     private bool firstTickPassed = false;
     private bool secondTickPassed = false;
     private bool sentinelChallenge = false;
-    private bool movedTooMuch = false;
+    private bool playerMoved = false;
     private float timeBeforeSentinelExit = 0;
 
     // Use this for initialization
@@ -106,24 +106,16 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
 
     public void HeadMoved()
     {
-        moveSentinel(Camera.main.transform.position - new Vector3(0, 4, 0), 15, false); //the -4y is because the camera is too high
+        if (!playerMoved)
+        {
+            Debug.Log("HeadMove!");
+            playerMoved = true;
+            moveSentinel(Camera.main.transform.position - new Vector3(0, 4, 0), 15, false); //the -4y is because the camera is too high
+        }
     }
 
     public void HeadStopped(float elapsedTime)
     {
-        if (!movedTooMuch)
-        {
-            if (elapsedTime < 0.5f)
-            {
-                //getSentinelDirectPathOrder().interrupt();
-                //TODO make it go back in few seconds
-            }
-            else
-            {
-                //sentinel will keep coming toward us
-                movedTooMuch = true;
-            }
-        }
     }
 
     public void SentinelIsWatching()
@@ -143,14 +135,16 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         dpo.setDestination(new Vector3(0, 0, 4), false, this);
     }
 
-    public void destinationReached(GameObject subject, bool toKill)
+    public void destinationReached(GameObject subject, bool rotatedAfter)
     {
-        Debug.Log("destinationReached(" + subject + ", "+ toKill+ ")");
+        Debug.Log("destinationReached(" + subject + ", "+ rotatedAfter+ ")");
         if (subject.CompareTag("sentinel"))
         {
-            if (!sentinelChallenge)
+            if(playerMoved)
+                SceneManager.LoadScene(2);
+            else if (!sentinelChallenge)
             {
-                if (toKill)
+                if (rotatedAfter)
                 {
                     SentinelIsWatching();
                 }
@@ -158,10 +152,6 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
                 {
                     SentinelExited();
                 }
-            }
-            else if (toKill)
-            {
-                SceneManager.LoadScene(2);
             }
             else
             {
