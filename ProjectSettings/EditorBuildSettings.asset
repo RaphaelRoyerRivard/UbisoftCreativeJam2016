@@ -9,3 +9,5 @@ EditorBuildSettings:
     path: Assets/Scene/introduction.unity
   - enabled: 1
     path: Assets/Scene/scene.unity
+  - enabled: 1
+    path: Assets/Scene/lose.unity
