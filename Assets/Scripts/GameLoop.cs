@@ -5,7 +5,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
 {
     public float firstTickTime = 5;
     public float secondTickTime = 10;
-
+    public float TimeBeforeSound = 0;
     private HeadMovementDetector headMovementDetector;
     private AudioSource ambiantSound;
     private float elapsedTime = 0;
@@ -28,6 +28,8 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         manageFirstTick();
         manageSecondTick();
         manageSentinelChallenge();
+
+        flickerLight();        
 	}
 
     void manageFirstTick()
@@ -56,11 +58,49 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         firstTickPassed = true;
     }
 
+
+    void flickerLight() {
+        var neonSound = GameObject.Find("NeonSound").GetComponent<AudioSource>();
+        if (TimeBeforeSound <= 0)
+        {
+            neonSound.volume = 0.5f;
+            neonSound.Play();
+            System.Random rnd = new System.Random();
+            //using fibonacci for randomness in time interval with up to 144 
+            TimeBeforeSound = Fibonacci(rnd.Next(0, 1000) % 34);
+        }
+        else
+        {
+            
+            TimeBeforeSound--;
+            //neonSound.volume = 0;
+        }
+    }
+    public static int Fibonacci(int n)
+    {
+        int a = 0;
+        int b = 1;
+        // In N steps compute Fibonacci sequence iteratively.
+        for (int i = 0; i < n; i++)
+        {
+            int temp = a;
+            a = b;
+            b = temp + b;
+        }
+        return a;
+    }
+
     void openNeon()
     {
         NeonScript neon = (NeonScript) GameObject.Find("Neon").GetComponent(typeof(NeonScript));
         Debug.Log(neon);
         neon.Open();
+    }
+
+    void closeNeon() {
+        NeonScript neon = (NeonScript)GameObject.Find("Neon").GetComponent(typeof(NeonScript));
+        Debug.Log(neon);
+        neon.Close();
     }
 
     void manageSecondTick()
