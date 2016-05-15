@@ -4,15 +4,16 @@ using System.Collections;
 public class GameLoop : MonoBehaviour
 {
     public float firstTickTime = 5;
+    public float secondTickTime = 10;
 
     private AudioSource ambiantSound;
     private float elapsedTime = 0;
     private bool firstTickPassed = false;
+    private bool secondTickPassed = false;
 
     // Use this for initialization
     void Start () {
         ambiantSound = GameObject.Find("Audio Ambiance 1").GetComponent<AudioSource>();
-
     }
 	
 	// Update is called once per frame
@@ -20,6 +21,7 @@ public class GameLoop : MonoBehaviour
     {
         elapsedTime += Time.deltaTime;
         manageFirstTick();
+        manageSecondTick();
 	}
 
     void manageFirstTick()
@@ -53,5 +55,13 @@ public class GameLoop : MonoBehaviour
         NeonScript neon = (NeonScript) GameObject.Find("Neon").GetComponent(typeof(NeonScript));
         Debug.Log(neon);
         neon.Open();
+    }
+
+    void manageSecondTick()
+    {
+        if(!secondTickPassed)
+        {
+
+        }
     }
 }
