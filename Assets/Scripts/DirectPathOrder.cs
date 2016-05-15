@@ -50,7 +50,7 @@ public class DirectPathOrder : MonoBehaviour
             else
             {
                 rotateTowardsPlayer = false;
-                listener.destinationReached(true);
+                listener.destinationReached(this.gameObject, true);
             }
         }
         else {
@@ -78,7 +78,7 @@ public class DirectPathOrder : MonoBehaviour
                     destinationSet = false;
                     if (!rotateTowardsPlayer)
                     {
-                        listener.destinationReached(false);
+                        listener.destinationReached(this.gameObject, false);
                     }
                     else
                     {

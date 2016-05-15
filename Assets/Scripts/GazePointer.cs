@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 /// <summary>
 /// This class is designed to be used on the GazePointer prefab.
 /// </summary>
-public class GazePointer : MonoBehaviour, GazeListener
+public class GazePointer : MonoBehaviour, GazeListener, DirectPathOrderListener
 {
     GazeDetector gazeDetector;
     GameObject selectedKey;
+    GameObject selectedLock;
     bool dressermoved = false;
 
     // Use this for initialization
@@ -47,26 +49,43 @@ public class GazePointer : MonoBehaviour, GazeListener
         {
             gameObject.GetComponent<Renderer>().material.color = Color.green;
             selectedKey = gameObject;
+
+            gameObject.SetActive(false);
+            //(gameObject.GetComponent("Halo") as Behaviour).enabled = false;
         }
         else if (gameObject.CompareTag("lock") && selectedKey != null)
         {
-            Destroy(gameObject);
-            Destroy(selectedKey);
-            selectedKey = null;
+            GameObject helper = GameObject.Find("Helper(Clone)");
+            DirectPathOrder dpo = (DirectPathOrder)helper.GetComponent(typeof(DirectPathOrder));
+            dpo.setDestination(gameObject.transform.position, false, this);
+
+            selectedLock = gameObject;
         }
         else if (gameObject.CompareTag("dresser"))
         {
-            if (!dressermoved) {
-
+            if (!dressermoved && (gameObject.GetComponent("Halo") as Behaviour).enabled)
+            {
                 (gameObject.GetComponent("Halo") as Behaviour).enabled = false;
-                var key = GameObject.Find("dresserKey");
-
-                gameObject.transform.position += new Vector3(0,0,-1f);
-                key.transform.position += new Vector3(0, 0.4f, 0f);
-
-                dressermoved = true;
+                GameObject helper = GameObject.Find("Helper(Clone)");
+                DirectPathOrder dpo = (DirectPathOrder)helper.GetComponent(typeof(DirectPathOrder));
+                dpo.setDestination(gameObject.transform.position, false, this);
             }
         }
+    }
 
+    public void destinationReached(GameObject subject, bool rotatedAfter)
+    {
+        if (!dressermoved)
+        {
+            GameObject.Find("table_0002_tiroir_table").transform.position += new Vector3(0, 0, -1f);
+            GameObject.Find("dresserKey").transform.position += new Vector3(0, 0.4f, 0f);
+            dressermoved = true;
+        } else if(selectedLock != null)
+        {
+            Destroy(selectedLock);
+            Destroy(selectedKey);
+            selectedKey = null;
+            selectedLock = null;
+        }
     }
 }
