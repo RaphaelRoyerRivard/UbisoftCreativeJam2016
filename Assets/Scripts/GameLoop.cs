@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
+using UnityEngine.SceneManagement;
 
 public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderListener
 {
@@ -72,14 +71,16 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
                 secondTickPassed = true;
                 //TODO open lights
                 //TODO add sounds
-                moveSentinel(new Vector3(-13.96f, -4.07f, 14.42f), 3);
+                moveSentinel(new Vector3(-13.96f, -4.07f, 14.42f), 3, true);
             }
         }
     }
 
-    void moveSentinel(Vector3 destination, float speed)
+    void moveSentinel(Vector3 destination, float speed, bool rotateAfter)
     {
-        getSentinelDirectPathOrder().setDestination(destination, speed, true, this);
+        DirectPathOrder dpo = getSentinelDirectPathOrder();
+        dpo.speed = speed;
+        dpo.setDestination(destination, rotateAfter, this);
     }
 
     DirectPathOrder getSentinelDirectPathOrder()
@@ -96,7 +97,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
 
     public void HeadMoved()
     {
-        moveSentinel(Camera.main.transform.position - new Vector3(0, 3, 0), 12); //the -3y is because the camera is too high
+        moveSentinel(Camera.main.transform.position - new Vector3(0, 4, 0), 15, false); //the -4y is because the camera is too high
     }
 
     public void HeadStopped(float elapsedTime)
@@ -105,7 +106,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         {
             if (elapsedTime < 0.5f)
             {
-                getSentinelDirectPathOrder().interrupt();
+                //getSentinelDirectPathOrder().interrupt();
                 //TODO make it go back in few seconds
             }
             else
@@ -133,6 +134,9 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         if (!sentinelChallenge)
         {
             sentinelChallenge = true;
+        } else
+        {
+            SceneManager.LoadScene(2);
         }
     }
 }

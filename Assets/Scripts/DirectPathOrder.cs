@@ -23,11 +23,10 @@ public class DirectPathOrder : MonoBehaviour
         listener = null;
     }
 
-    public void setDestination(Vector3 destination, float speed, bool rotateTowardsPlayer, DirectPathOrderListener listener)
+    public void setDestination(Vector3 destination, bool rotateTowardsPlayer, DirectPathOrderListener listener)
     {
         this.destination = destination;
         destinationSet = true;
-        this.speed = speed;
         this.rotateTowardsPlayer = rotateTowardsPlayer;
         this.listener = listener;
     }
@@ -37,19 +36,16 @@ public class DirectPathOrder : MonoBehaviour
     {
         if (!destinationSet && !rotateTowardsPlayer)
             return;
-        Vector3 dest = destinationSet ? destination : Camera.main.transform.position;
-        Vector3 dir = dest - transform.position;
-
-        //To smooth the rotation of the object when it is on a new trajectory
-        if (dir != Vector3.zero)
+        if (!destinationSet && rotateTowardsPlayer)
         {
+            Vector3 dir = transform.position - Camera.main.transform.position;
             if (transform.rotation != Quaternion.LookRotation(dir))
             {
                 transform.rotation = Quaternion.Slerp(
                     transform.rotation,
                     Quaternion.LookRotation(dir),
                     Time.deltaTime * rotationSpeed
-                );  //TODO rotate at the right angle, not the opposite
+                );
             }
             else
             {
@@ -57,17 +53,38 @@ public class DirectPathOrder : MonoBehaviour
                 listener.destinationReached();
             }
         }
+        else {
+            Vector3 dir = transform.position - destination;
 
-        if (destinationSet)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, dest, Time.deltaTime * speed);
-            float dist = Vector3.Distance(destination, transform.position);
-            if (dist <= reachDist)
+            //To smooth the rotation of the object when it is on a new trajectory
+            if (dir != Vector3.zero)
             {
-                destinationSet = false;
-                if(!rotateTowardsPlayer)
+                if (transform.rotation != Quaternion.LookRotation(dir))
                 {
-                    listener.destinationReached();
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation,
+                        Quaternion.LookRotation(dir),
+                        Time.deltaTime * rotationSpeed
+                    );
+                }
+            }
+
+            if (destinationSet)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * speed);
+                float dist = Vector3.Distance(destination, transform.position);
+                Debug.Log("distance: " + dist + " / " + reachDist);
+                if (dist <= reachDist)
+                {
+                    destinationSet = false;
+                    if (!rotateTowardsPlayer)
+                    {
+                        listener.destinationReached();
+                    }
+                    else
+                    {
+                        Debug.Log("Angle still need to be set");
+                    }
                 }
             }
         }
