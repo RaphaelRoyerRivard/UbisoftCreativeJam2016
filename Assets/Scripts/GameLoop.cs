@@ -161,6 +161,8 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         {
             //helper
             Debug.Log("helper finished moving");
+            GameObject tirroir = GameObject.Find("table_0002_tiroir_table");
+            (tirroir.GetComponent("Halo") as Behaviour).enabled = true;
         }
     }
 }

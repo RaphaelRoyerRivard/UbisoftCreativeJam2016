@@ -2,5 +2,5 @@
 
 public interface DirectPathOrderListener
 {
-    void destinationReached(GameObject subject, bool destinationReached);
+    void destinationReached(GameObject subject, bool rotatedAfter);
 }
