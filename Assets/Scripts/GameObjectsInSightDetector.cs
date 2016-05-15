@@ -2,7 +2,7 @@
 using System.Collections;
 
 /// <summary>
-/// This script must be attached to a GameObject that has a render.
+/// This script must be attached to a GameObject that has a renderer.
 /// </summary>
 public class GameObjectsInSightDetector : MonoBehaviour {
     private bool toggle = false;
