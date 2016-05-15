@@ -5,15 +5,14 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
 {
     public float firstTickTime = 5;
     public float secondTickTime = 10;
-    public GameObject helperType;
-
+    public float TimeBeforeSound = 0;
     private HeadMovementDetector headMovementDetector;
     private AudioSource ambiantSound;
     private float elapsedTime = 0;
     private bool firstTickPassed = false;
     private bool secondTickPassed = false;
     private bool sentinelChallenge = false;
-    private bool playerMoved = false;
+    private bool movedTooMuch = false;
     private float timeBeforeSentinelExit = 0;
     private bool sentinelFirst = true;
 
@@ -30,6 +29,8 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         manageFirstTick();
         manageSecondTick();
         manageSentinelChallenge();
+
+        flickerLight();        
 	}
 
     void manageFirstTick()
@@ -58,11 +59,49 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         firstTickPassed = true;
     }
 
+
+    void flickerLight() {
+        var neonSound = GameObject.Find("NeonSound").GetComponent<AudioSource>();
+        if (TimeBeforeSound <= 0)
+        {
+            neonSound.volume = 0.5f;
+            neonSound.Play();
+            System.Random rnd = new System.Random();
+            //using fibonacci for randomness in time interval with up to 144 
+            TimeBeforeSound = Fibonacci(rnd.Next(0, 1000) % 34);
+        }
+        else
+        {
+            
+            TimeBeforeSound--;
+            //neonSound.volume = 0;
+        }
+    }
+    public static int Fibonacci(int n)
+    {
+        int a = 0;
+        int b = 1;
+        // In N steps compute Fibonacci sequence iteratively.
+        for (int i = 0; i < n; i++)
+        {
+            int temp = a;
+            a = b;
+            b = temp + b;
+        }
+        return a;
+    }
+
     void openNeon()
     {
         NeonScript neon = (NeonScript) GameObject.Find("Neon").GetComponent(typeof(NeonScript));
         Debug.Log(neon);
         neon.Open();
+    }
+
+    void closeNeon() {
+        NeonScript neon = (NeonScript)GameObject.Find("Neon").GetComponent(typeof(NeonScript));
+        Debug.Log(neon);
+        neon.Close();
     }
 
     void manageSecondTick()
@@ -96,6 +135,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     {
         if (sentinelChallenge)
         {
+
             if (timeBeforeSentinelExit > 0 && Time.time > timeBeforeSentinelExit) {
                 Debug.Log("Challenge over");
                 sentinelChallenge = false;
@@ -108,16 +148,24 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
 
     public void HeadMoved()
     {
-        if (!playerMoved)
-        {
-            Debug.Log("HeadMove!");
-            playerMoved = true;
-            moveSentinel(Camera.main.transform.position - new Vector3(0, 4, 0), 15, false); //the -4y is because the camera is too high
-        }
+        moveSentinel(Camera.main.transform.position - new Vector3(0, 4, 0), 15, false); //the -4y is because the camera is too high
     }
 
     public void HeadStopped(float elapsedTime)
     {
+        if (!movedTooMuch)
+        {
+            if (elapsedTime < 0.5f)
+            {
+                //getSentinelDirectPathOrder().interrupt();
+                //TODO make it go back in few seconds
+            }
+            else
+            {
+                //sentinel will keep coming toward us
+                movedTooMuch = true;
+            }
+        }
     }
 
     public void SentinelIsWatching()
@@ -130,6 +178,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     public void SentinelExited()
     {
         Debug.Log("SentinelExited!!");
+
         SoundPlayer soundPlayer = (SoundPlayer)GetComponent(typeof(SoundPlayer));
         soundPlayer.addSound(2);
 
@@ -142,28 +191,22 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         }
     }
 
-    public void destinationReached(GameObject subject, bool rotatedAfter)
+    public void destinationReached(bool toKill)
     {
-        Debug.Log("destinationReached(" + subject + ", "+ rotatedAfter+ ")");
-        if (subject.CompareTag("sentinel"))
+        Debug.Log("destinationReached: "+ toKill);
+        if (!sentinelChallenge)
         {
-            if(playerMoved)
-                SceneManager.LoadScene(2);
-            else if (!sentinelChallenge)
+            if(toKill)
             {
-                if (rotatedAfter)
-                {
-                    SentinelIsWatching();
-                }
-                else
-                {
-                    SentinelExited();
-                }
-            }
-            else
+                SentinelIsWatching();
+            } else
             {
-                Debug.Log("Why does it pass here...");
+                SentinelExited();
             }
+        }
+        else if(toKill)
+        {
+            SceneManager.LoadScene(2);
         } else
         {
             //helper
