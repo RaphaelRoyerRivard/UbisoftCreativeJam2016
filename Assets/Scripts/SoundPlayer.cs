@@ -9,6 +9,7 @@ public class SoundPlayer : MonoBehaviour {
     AudioClip[][] audioClips = new AudioClip[5][];
     AudioSource[] audioSources = new AudioSource[5];
     float[] timeForNextSound = new float[5];
+    int soundCount = 0;
 
     // Use this for initialization
     void Start ()
@@ -46,10 +47,15 @@ public class SoundPlayer : MonoBehaviour {
         for (int i = 0; i < timeForNextSound.Length; i++)
                 timeForNextSound[i] = Random.Range(minSoundDelay, maxSoundDelay);
     }
+
+    public void addSound(int qty)
+    {
+        soundCount += qty;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        for(int i =0; i<timeForNextSound.Length; i++)
+        for(int i=0; i<soundCount; i++)
         {
             timeForNextSound[i] -= Time.deltaTime;
             if (timeForNextSound[i] <= 0)
@@ -63,8 +69,6 @@ public class SoundPlayer : MonoBehaviour {
     void PlaySound(int index)
     {
         int soundIndex = (int) Mathf.Floor(Random.Range(0, audioClips[index].Length));
-        Debug.Log("Playing sound " + soundIndex);
-        Debug.Log("Sound is: " + audioClips[index][soundIndex]);
         audioSources[index].PlayOneShot(audioClips[index][soundIndex]);
     }
 }
