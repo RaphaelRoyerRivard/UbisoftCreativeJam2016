@@ -14,20 +14,20 @@ public class SoundPlayer : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        audioClips[0] = new AudioClip[3];
+        audioClips[0] = new AudioClip[5];
         audioClips[1] = new AudioClip[3];
-        audioClips[2] = new AudioClip[5];
+        audioClips[2] = new AudioClip[3];
         audioClips[3] = new AudioClip[5];
         audioClips[4] = new AudioClip[9];
 
         for (int i = 0; i < audioClips[0].Length; i++)
-            audioClips[0][i] = (AudioClip)Resources.Load("SFX_Torture_Female1_0" + (i + 1));
+            audioClips[0][i] = (AudioClip)Resources.Load("SFX_Torture_Male1_0" + (i + 1));
 
         for (int i = 0; i < audioClips[1].Length; i++)
-            audioClips[1][i] = (AudioClip)Resources.Load("SFX_Torture_Female2_0" + (i + 1));
+            audioClips[1][i] = (AudioClip)Resources.Load("SFX_Torture_Female1_0" + (i + 1));
 
         for (int i = 0; i < audioClips[2].Length; i++)
-            audioClips[2][i] = (AudioClip)Resources.Load("SFX_Torture_Male1_0" + (i + 1));
+            audioClips[2][i] = (AudioClip)Resources.Load("SFX_Torture_Female2_0" + (i + 1));
 
         /*for (int i = 0; i < audioClips[3].Length; i++)
             audioClips[3][i] = (AudioClip)Resources.Load("SFX_Torture_Male2_0" + (i + 1));*/
@@ -74,7 +74,9 @@ public class SoundPlayer : MonoBehaviour {
 
     public static void playSoundNamed(string sound, AudioSource audioSource)
     {
-        audioSource.PlayOneShot((AudioClip)Resources.Load(sound));
+        AudioClip clip = (AudioClip)Resources.Load(sound);
+        Debug.Log("playing "+clip+" on "+audioSource);
+        audioSource.PlayOneShot(clip);
     }
 
 

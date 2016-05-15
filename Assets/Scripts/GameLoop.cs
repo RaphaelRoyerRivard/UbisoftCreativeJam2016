@@ -14,6 +14,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     private bool sentinelChallenge = false;
     private bool movedTooMuch = false;
     private float timeBeforeSentinelExit = 0;
+    private bool sentinelFirst = true;
 
     // Use this for initialization
     void Start () {
@@ -117,7 +118,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         }
     }
 
-    void moveSentinel(Vector3 destination, float speed, bool rotateAfter)
+    public void moveSentinel(Vector3 destination, float speed, bool rotateAfter)
     {
         DirectPathOrder dpo = getSentinelDirectPathOrder();
         dpo.speed = speed;
@@ -134,9 +135,12 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     {
         if (sentinelChallenge)
         {
-            if (timeBeforeSentinelExit > 0 && elapsedTime > timeBeforeSentinelExit) {
+
+            if (timeBeforeSentinelExit > 0 && Time.time > timeBeforeSentinelExit) {
+                Debug.Log("Challenge over");
                 sentinelChallenge = false;
-                moveSentinel(new Vector3(-19.85f, -4.07f, 14.42f), 3, false);
+                Vector3 destination = sentinelFirst ? new Vector3(-22.85f, -4.07f, 14.42f) : new Vector3(16.23f, -4.07f, 14.42f);
+                moveSentinel(destination, 3, false);
             }
             headMovementDetector.Update();
         }
@@ -168,12 +172,23 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     {
         sentinelChallenge = true;
         timeBeforeSentinelExit = Time.time + 3;
+        SoundPlayer.playSoundNamed("VO_DontMove", GameObject.Find("first_voice").GetComponent<AudioSource>());
     }
 
     public void SentinelExited()
     {
         Debug.Log("SentinelExited!!");
-        //TODO make helper apprear
+
+        SoundPlayer soundPlayer = (SoundPlayer)GetComponent(typeof(SoundPlayer));
+        soundPlayer.addSound(2);
+
+        if (sentinelFirst)
+        {
+            GameObject helper = (GameObject)Instantiate(helperType, new Vector3(0, 0, -1.2f), Quaternion.identity);
+            DirectPathOrder dpo = (DirectPathOrder)helper.GetComponent(typeof(DirectPathOrder));
+            dpo.setDestination(new Vector3(0, 0, 4), false, this);
+            sentinelFirst = false;
+        }
     }
 
     public void destinationReached(bool toKill)
@@ -194,7 +209,11 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
             SceneManager.LoadScene(2);
         } else
         {
-            Debug.Log("Why does it pass here...");
+            //helper
+            Debug.Log("helper finished moving");
+            GameObject tirroir = GameObject.Find("table_0002_tiroir_table");
+            (tirroir.GetComponent("Halo") as Behaviour).enabled = true;
+            SoundPlayer.playSoundNamed("VO_ThreePhrases", GameObject.Find("Helper(Clone)").GetComponent<AudioSource>());
         }
     }
 }
