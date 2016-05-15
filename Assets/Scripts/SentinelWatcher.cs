@@ -4,49 +4,31 @@ using UnityEngine.SceneManagement;
 class SentinelWatcher : MonoBehaviour
 {
     bool isMoving = false;
+    bool isplaying = false;
     Vector3 lastPosition;
     AudioSource audioSource;
     AudioClip bonesSound;
+    Rigidbody rigidbody;
 
     void Start()
     {
-        lastPosition = transform.position;
-        bonesSound = (AudioClip)Resources.Load("SFX_BoneRub");
         audioSource = GetComponent<AudioSource>();
-        audioSource.loop = true;
-        audioSource.PlayOneShot(bonesSound);
-        audioSource.volume = 0;
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        if(!isMoving)
+        if (!rigidbody.IsSleeping())
         {
-            if(lastPosition != transform.position)
-            {
-                //Debug.Log("startMoving");
-                isMoving = true;
-                startSoundLoop();
-            }
-        } else
-        {
-            if (lastPosition == transform.position)
-            {
-                //Debug.Log("stopMoving");
-                isMoving = false;
-                stopSoundLoop();
+            if (!audioSource.isPlaying) {
+                audioSource.Play();
             }
         }
-        lastPosition = transform.position;
-    }
-
-    void startSoundLoop()
-    {
-        audioSource.volume = 1;
-    }
-
-    void stopSoundLoop()
-    {
-        audioSource.volume = 0;
+        else {
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
+        }
     }
 }
