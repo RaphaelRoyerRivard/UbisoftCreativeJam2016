@@ -6,6 +6,8 @@ TagManager:
   tags:
   - key
   - lock
+  - sentinel
+  - helper
   layers:
   - Default
   - TransparentFX

@@ -50,7 +50,7 @@ public class DirectPathOrder : MonoBehaviour
             else
             {
                 rotateTowardsPlayer = false;
-                listener.destinationReached();
+                listener.destinationReached(true);
             }
         }
         else {
@@ -73,13 +73,12 @@ public class DirectPathOrder : MonoBehaviour
             {
                 transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * speed);
                 float dist = Vector3.Distance(destination, transform.position);
-                Debug.Log("distance: " + dist + " / " + reachDist);
                 if (dist <= reachDist)
                 {
                     destinationSet = false;
                     if (!rotateTowardsPlayer)
                     {
-                        listener.destinationReached();
+                        listener.destinationReached(false);
                     }
                     else
                     {
