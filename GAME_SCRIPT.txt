@@ -1,0 +1,26 @@
+Trucs à développer
+
+- Game loop
+
+
+
+1. Intro
+2. Scene pitch black, Fade in ambiant sound, cris 1,2
+3. Flickering light over body
+4. 5 secondes plus tard, lumière rouge dans le corridor avec le son du sentinel
+5. Le sentinel s'arrête devant la porte, "Don't move!"
+6. Si le joueur bouge, le sentinel s'approche et un son aggressant survient
+	a) s'il arrête de bouger, le sentinel se retourne et s'éloigne
+	b) s'il continue, le sentinel lui saute dessus et le joueur perd
+7. Le sentinel disparait avec la lumière rouge
+8. cris 1,2,3
+8. Le fantome vient devant le joueur et lui dit qu'il peut l'aider à s'évader
+9. Le joueur peut ouvrir le tirroir pour trouver la 2e clé
+10. La lumière rouge et le son du sentinel reviennent et le fantome dit qu'il arrive
+11. Le sentinel entre dans la piece et fixe le joueur de loin
+12. idem au 6 et 7
+13. cris 1,2,3,4,5
+14. le pentagrame apparait et quand on regarde pour la 5e fois le pentagramme, tout devient noir sauf le pentagramme et la clé apparait (mais non sélectionnable)
+15. des lumières flashent et on voit le sentinelle dans le cadre de porte, puis il s'approche et s'arrete très près du joueur
+16. une fois qu'il est parti, le joueur peut prendre la clé et débarrer le 2e cadena
+18. "Run!"
