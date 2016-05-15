@@ -1,19 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using UnityEngine.SceneManagement;
 
-public class GameLoop : MonoBehaviour
+public class GameLoop : MonoBehaviour, HeadMovementListener
 {
     public float firstTickTime = 5;
     public float secondTickTime = 10;
 
+    private HeadMovementDetector headMovementDetector;
     private AudioSource ambiantSound;
     private float elapsedTime = 0;
     private bool firstTickPassed = false;
     private bool secondTickPassed = false;
+    private bool sentinelChallenge = false;
 
     // Use this for initialization
     void Start () {
         ambiantSound = GameObject.Find("Audio Ambiance 1").GetComponent<AudioSource>();
+        headMovementDetector = new HeadMovementDetector(this);
     }
 	
 	// Update is called once per frame
@@ -22,6 +27,7 @@ public class GameLoop : MonoBehaviour
         elapsedTime += Time.deltaTime;
         manageFirstTick();
         manageSecondTick();
+        manageSentinelChallenge();
 	}
 
     void manageFirstTick()
@@ -61,7 +67,41 @@ public class GameLoop : MonoBehaviour
     {
         if(!secondTickPassed)
         {
+            if (elapsedTime > secondTickTime)
+            {
+                secondTickPassed = true;
+                //TODO open lights
+                moveSentinel();
+            }
+        }
+    }
 
+    void moveSentinel()
+    {
+        //TODO move sentinel
+        sentinelChallenge = true;
+    }
+
+    void manageSentinelChallenge()
+    {
+        if (sentinelChallenge)
+            headMovementDetector.Update();
+    }
+
+    public void HeadMoved()
+    {
+        //TODO sentinel should come closer
+    }
+
+    public void HeadStopped(float elapsedTime)
+    {
+        if (elapsedTime < 0.5f)
+        {
+            //TODO sentinel should stop moving toward us
+        } else
+        {
+            //sentinel should keep coming toward us
+            SceneManager.LoadScene(2);
         }
     }
 }
