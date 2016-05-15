@@ -15,7 +15,8 @@ class SentinelWatcher : MonoBehaviour
 
     void OnCollisionEnter (Collision col)
     {
-        if(col.gameObject.name == "chair_man")
+        Debug.Log("OnCollisionEnter: "+col.gameObject.name);
+        if (col.gameObject.name == "chair_man")
         {
             SceneManager.LoadScene(2);
         }

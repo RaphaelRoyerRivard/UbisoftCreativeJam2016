@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class GameLoop : MonoBehaviour, HeadMovementListener
+public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderListener
 {
     public float firstTickTime = 5;
     public float secondTickTime = 10;
@@ -71,15 +71,21 @@ public class GameLoop : MonoBehaviour, HeadMovementListener
             {
                 secondTickPassed = true;
                 //TODO open lights
-                moveSentinel();
+                //TODO add sounds
+                moveSentinel(new Vector3(-13.96f, -4.07f, 14.42f), 3);
             }
         }
     }
 
-    void moveSentinel()
+    void moveSentinel(Vector3 destination, float speed)
     {
-        //TODO start sentinel pattern
-        sentinelChallenge = true;
+        getSentinelDirectPathOrder().setDestination(destination, speed, true, this);
+    }
+
+    DirectPathOrder getSentinelDirectPathOrder()
+    {
+        GameObject sentinel = GameObject.Find("sentinel");
+        return (DirectPathOrder)sentinel.GetComponent(typeof(DirectPathOrder));
     }
 
     void manageSentinelChallenge()
@@ -90,7 +96,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener
 
     public void HeadMoved()
     {
-        //TODO sentinel should rotate and come toward us
+        moveSentinel(Camera.main.transform.position - new Vector3(0, 3, 0), 12); //the -3y is because the camera is too high
     }
 
     public void HeadStopped(float elapsedTime)
@@ -99,18 +105,34 @@ public class GameLoop : MonoBehaviour, HeadMovementListener
         {
             if (elapsedTime < 0.5f)
             {
-                //TODO sentinel should stop moving toward us
+                getSentinelDirectPathOrder().interrupt();
+                //TODO make it go back in few seconds
             }
             else
             {
-                //sentinel should keep coming toward us
+                //sentinel will keep coming toward us
                 movedTooMuch = true;
             }
         }
     }
 
+    public void SentinelIsWatching()
+    {
+        sentinelChallenge = true;
+    }
+
     public void SentinelExited()
     {
+        sentinelChallenge = false;
         //TODO trigger next
+    }
+
+    public void destinationReached()
+    {
+        Debug.Log("destinationReached");
+        if (!sentinelChallenge)
+        {
+            sentinelChallenge = true;
+        }
     }
 }
