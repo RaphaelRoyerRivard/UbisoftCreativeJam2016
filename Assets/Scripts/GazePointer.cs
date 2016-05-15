@@ -7,6 +7,7 @@ using System.Collections;
 public class GazePointer : MonoBehaviour, GazeListener
 {
     GazeDetector gazeDetector;
+    GameObject selectedKey;
 
     // Use this for initialization
     void Start ()
@@ -24,18 +25,32 @@ public class GazePointer : MonoBehaviour, GazeListener
     public void GameObjectFocused(GameObject gameObject)
     {
         Debug.Log("GameObjectFocused: " + gameObject);
-        gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+        if((selectedKey == null && gameObject.CompareTag("key")) || (selectedKey != null && gameObject.CompareTag("lock")))
+        {
+            gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+        }
     }
 
     public void GameObjectLostFocus(GameObject gameObject)
     {
         Debug.Log("GameObjectLostFocus: " + gameObject);
-        gameObject.GetComponent<Renderer>().material.color = Color.red;
+        if (gameObject.CompareTag("key") && selectedKey == null || gameObject.CompareTag("lock"))
+            gameObject.GetComponent<Renderer>().material.color = Color.white;
     }
 
     public void GameObjectGazed(GameObject gameObject)
     {
         Debug.Log("GameObjectGazed: " + gameObject);
-        gameObject.GetComponent<Renderer>().material.color = Color.green;
+        if (gameObject.CompareTag("key"))
+        {
+            gameObject.GetComponent<Renderer>().material.color = Color.green;
+            selectedKey = gameObject;
+        }
+        else if (gameObject.CompareTag("lock") && selectedKey != null)
+        {
+            Destroy(gameObject);
+            Destroy(selectedKey);
+            selectedKey = null;
+        }
     }
 }
