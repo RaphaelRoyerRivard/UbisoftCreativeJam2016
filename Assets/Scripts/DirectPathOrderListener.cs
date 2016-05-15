@@ -1,4 +1,6 @@
-﻿public interface DirectPathOrderListener
+﻿using UnityEngine;
+
+public interface DirectPathOrderListener
 {
-    void destinationReached(bool toKill);
+    void destinationReached(GameObject subject, bool rotatedAfter);
 }

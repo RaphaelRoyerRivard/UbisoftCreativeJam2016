@@ -5,6 +5,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
 {
     public float firstTickTime = 5;
     public float secondTickTime = 10;
+    public GameObject helperType;
 
     private HeadMovementDetector headMovementDetector;
     private AudioSource ambiantSound;
@@ -12,7 +13,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     private bool firstTickPassed = false;
     private bool secondTickPassed = false;
     private bool sentinelChallenge = false;
-    private bool movedTooMuch = false;
+    private bool playerMoved = false;
     private float timeBeforeSentinelExit = 0;
 
     // Use this for initialization
@@ -95,8 +96,9 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
         if (sentinelChallenge)
         {
             if (timeBeforeSentinelExit > 0 && elapsedTime > timeBeforeSentinelExit) {
+                Debug.Log("Challenge over");
                 sentinelChallenge = false;
-                moveSentinel(new Vector3(-19.85f, -4.07f, 14.42f), 3, false);
+                moveSentinel(new Vector3(-22.85f, -4.07f, 14.42f), 3, false);
             }
             headMovementDetector.Update();
         }
@@ -104,24 +106,16 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
 
     public void HeadMoved()
     {
-        moveSentinel(Camera.main.transform.position - new Vector3(0, 4, 0), 15, false); //the -4y is because the camera is too high
+        if (!playerMoved)
+        {
+            Debug.Log("HeadMove!");
+            playerMoved = true;
+            moveSentinel(Camera.main.transform.position - new Vector3(0, 4, 0), 15, false); //the -4y is because the camera is too high
+        }
     }
 
     public void HeadStopped(float elapsedTime)
     {
-        if (!movedTooMuch)
-        {
-            if (elapsedTime < 0.5f)
-            {
-                //getSentinelDirectPathOrder().interrupt();
-                //TODO make it go back in few seconds
-            }
-            else
-            {
-                //sentinel will keep coming toward us
-                movedTooMuch = true;
-            }
-        }
     }
 
     public void SentinelIsWatching()
@@ -133,28 +127,42 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     public void SentinelExited()
     {
         Debug.Log("SentinelExited!!");
-        //TODO make helper apprear
+        SoundPlayer soundPlayer = (SoundPlayer)GetComponent(typeof(SoundPlayer));
+        soundPlayer.addSound(1);
+        
+        GameObject helper = (GameObject)Instantiate(helperType, new Vector3(0, 0, -1.2f), Quaternion.identity);
+        DirectPathOrder dpo = (DirectPathOrder)helper.GetComponent(typeof(DirectPathOrder));
+        dpo.setDestination(new Vector3(0, 0, 4), false, this);
     }
 
-    public void destinationReached(bool toKill)
+    public void destinationReached(GameObject subject, bool rotatedAfter)
     {
-        Debug.Log("destinationReached: "+ toKill);
-        if (!sentinelChallenge)
+        Debug.Log("destinationReached(" + subject + ", "+ rotatedAfter+ ")");
+        if (subject.CompareTag("sentinel"))
         {
-            if(toKill)
+            if(playerMoved)
+                SceneManager.LoadScene(2);
+            else if (!sentinelChallenge)
             {
-                SentinelIsWatching();
-            } else
-            {
-                SentinelExited();
+                if (rotatedAfter)
+                {
+                    SentinelIsWatching();
+                }
+                else
+                {
+                    SentinelExited();
+                }
             }
-        }
-        else if(toKill)
-        {
-            SceneManager.LoadScene(2);
+            else
+            {
+                Debug.Log("Why does it pass here...");
+            }
         } else
         {
-            Debug.Log("Why does it pass here...");
+            //helper
+            Debug.Log("helper finished moving");
+            GameObject tirroir = GameObject.Find("table_0002_tiroir_table");
+            (tirroir.GetComponent("Halo") as Behaviour).enabled = true;
         }
     }
 }
