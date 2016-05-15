@@ -31,6 +31,7 @@ public class GazeDetector
         if (Physics.Raycast(ray, out hit))
         {
             Transform objectHit = hit.transform;
+            Debug.Log(objectHit.gameObject);
             if(objectHit.gameObject != currentlyFocused)
             {
                 if (currentlyFocused != null)
