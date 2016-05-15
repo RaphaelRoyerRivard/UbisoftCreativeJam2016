@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using UnityEngine.SceneManagement;
 
 public class GameLoop : MonoBehaviour, HeadMovementListener
 {
@@ -14,6 +13,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener
     private bool firstTickPassed = false;
     private bool secondTickPassed = false;
     private bool sentinelChallenge = false;
+    private bool movedTooMuch = false;
 
     // Use this for initialization
     void Start () {
@@ -78,7 +78,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener
 
     void moveSentinel()
     {
-        //TODO move sentinel
+        //TODO start sentinel pattern
         sentinelChallenge = true;
     }
 
@@ -90,18 +90,27 @@ public class GameLoop : MonoBehaviour, HeadMovementListener
 
     public void HeadMoved()
     {
-        //TODO sentinel should come closer
+        //TODO sentinel should rotate and come toward us
     }
 
     public void HeadStopped(float elapsedTime)
     {
-        if (elapsedTime < 0.5f)
+        if (!movedTooMuch)
         {
-            //TODO sentinel should stop moving toward us
-        } else
-        {
-            //sentinel should keep coming toward us
-            SceneManager.LoadScene(2);
+            if (elapsedTime < 0.5f)
+            {
+                //TODO sentinel should stop moving toward us
+            }
+            else
+            {
+                //sentinel should keep coming toward us
+                movedTooMuch = true;
+            }
         }
+    }
+
+    public void SentinelExited()
+    {
+
     }
 }
