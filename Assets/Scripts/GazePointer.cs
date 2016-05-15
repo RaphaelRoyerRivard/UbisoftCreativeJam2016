@@ -8,6 +8,7 @@ public class GazePointer : MonoBehaviour, GazeListener
 {
     GazeDetector gazeDetector;
     GameObject selectedKey;
+    bool dressermoved = false;
 
     // Use this for initialization
     void Start ()
@@ -41,6 +42,7 @@ public class GazePointer : MonoBehaviour, GazeListener
     public void GameObjectGazed(GameObject gameObject)
     {
         Debug.Log("GameObjectGazed: " + gameObject);
+        
         if (gameObject.CompareTag("key"))
         {
             gameObject.GetComponent<Renderer>().material.color = Color.green;
@@ -52,5 +54,19 @@ public class GazePointer : MonoBehaviour, GazeListener
             Destroy(selectedKey);
             selectedKey = null;
         }
+        else if (gameObject.CompareTag("dresser"))
+        {
+            if (!dressermoved) {
+
+                (gameObject.GetComponent("Halo") as Behaviour).enabled = false;
+                var key = GameObject.Find("dresserKey");
+
+                gameObject.transform.position += new Vector3(0,0,-1f);
+                key.transform.position += new Vector3(0, 0.4f, 0f);
+
+                dressermoved = true;
+            }
+        }
+
     }
 }
