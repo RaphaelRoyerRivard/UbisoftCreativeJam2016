@@ -10,6 +10,7 @@ public class GazePointer : MonoBehaviour, GazeListener, DirectPathOrderListener
     GazeDetector gazeDetector;
     GameObject selectedKey;
     GameObject selectedLock;
+    int locks = 0;
     bool dressermoved = false;
 
     // Use this for initialization
@@ -51,7 +52,10 @@ public class GazePointer : MonoBehaviour, GazeListener, DirectPathOrderListener
             selectedKey = gameObject;
 
             gameObject.SetActive(false);
-            //(gameObject.GetComponent("Halo") as Behaviour).enabled = false;
+            SoundPlayer.playSoundNamed("VO_FirstKey", GameObject.Find("Helper(Clone)").GetComponent<AudioSource>());
+
+            GameLoop gameLoop = Camera.main.GetComponent<GameLoop>();
+            gameLoop.moveSentinel(new Vector3(-13.96f, -4.07f, 14.42f), 3, true);
         }
         else if (gameObject.CompareTag("lock") && selectedKey != null)
         {
@@ -77,15 +81,24 @@ public class GazePointer : MonoBehaviour, GazeListener, DirectPathOrderListener
     {
         if (!dressermoved)
         {
-            GameObject.Find("table_0002_tiroir_table").transform.position += new Vector3(0, 0, -1f);
+            GameObject tiroir = GameObject.Find("table_0002_tiroir_table");
+            tiroir.transform.position += new Vector3(0, 0, -1f);
+            SoundPlayer.playSoundNamed("SFX_DrawerOpen", tiroir.GetComponent<AudioSource>());
             GameObject.Find("dresserKey").transform.position += new Vector3(0, 0.4f, 0f);
             dressermoved = true;
         } else if(selectedLock != null)
         {
+            SoundPlayer.playSoundNamed("SFX_KeyInsert", selectedLock.GetComponent<AudioSource>());
             Destroy(selectedLock);
-            Destroy(selectedKey);
-            selectedKey = null;
+            //Destroy(selectedKey);
+            //selectedKey = null;
             selectedLock = null;
+            locks++;
+            if(locks == 2)
+            {
+                //TODO close lights and play
+                SoundPlayer.playSoundNamed("VO_Run", GameObject.Find("Helper(Clone)").GetComponent<AudioSource>());
+            }
         }
     }
 }
