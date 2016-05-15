@@ -13,6 +13,7 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     private bool secondTickPassed = false;
     private bool sentinelChallenge = false;
     private bool movedTooMuch = false;
+    private float timeBeforeSentinelExit = 0;
 
     // Use this for initialization
     void Start () {
@@ -92,7 +93,13 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     void manageSentinelChallenge()
     {
         if (sentinelChallenge)
+        {
+            if (timeBeforeSentinelExit > 0 && elapsedTime > timeBeforeSentinelExit) {
+                sentinelChallenge = false;
+                moveSentinel(new Vector3(-19.85f, -4.07f, 14.42f), 3, false);
+            }
             headMovementDetector.Update();
+        }
     }
 
     public void HeadMoved()
@@ -120,23 +127,34 @@ public class GameLoop : MonoBehaviour, HeadMovementListener, DirectPathOrderList
     public void SentinelIsWatching()
     {
         sentinelChallenge = true;
+        timeBeforeSentinelExit = Time.time + 3;
     }
 
     public void SentinelExited()
     {
-        sentinelChallenge = false;
-        //TODO trigger next
+        Debug.Log("SentinelExited!!");
+        //TODO make helper apprear
     }
 
-    public void destinationReached()
+    public void destinationReached(bool toKill)
     {
-        Debug.Log("destinationReached");
+        Debug.Log("destinationReached: "+ toKill);
         if (!sentinelChallenge)
         {
-            sentinelChallenge = true;
-        } else
+            if(toKill)
+            {
+                SentinelIsWatching();
+            } else
+            {
+                SentinelExited();
+            }
+        }
+        else if(toKill)
         {
             SceneManager.LoadScene(2);
+        } else
+        {
+            Debug.Log("Why does it pass here...");
         }
     }
 }

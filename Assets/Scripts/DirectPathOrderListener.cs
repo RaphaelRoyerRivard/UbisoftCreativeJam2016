@@ -1,4 +1,4 @@
 ﻿public interface DirectPathOrderListener
 {
-    void destinationReached();
+    void destinationReached(bool toKill);
 }
